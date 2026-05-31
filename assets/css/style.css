@@ -1,0 +1,17 @@
+body {
+    background-color: rgba(0, 0, 0, 0.753);
+}
+
+h1 {
+    color: whitesmoke;
+}
+/* /busqueda */
+.input-group {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+/* //boton de formulario */
+#btnSubirPj {
+    margin-top: 12px;
+}
+/* //formulario */
