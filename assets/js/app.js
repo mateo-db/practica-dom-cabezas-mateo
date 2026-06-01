@@ -45,3 +45,14 @@ const cargarPersonajes = (arregloPj) => {
 
 // aca se llama a la funcion cargarPersonajes
 cargarPersonajes()
+
+searchName.addEventListener("click", (e) => {
+    if (e.target.id === 'btnBuscar') {
+        const nombreBuscado = inputUserName.value 
+        // console.log ("Se detectó el click y se capturó el texto que ingresó el usuario!")
+        // console.log(nombreBuscado)
+
+
+    }
+    // console.log(e)
+})
