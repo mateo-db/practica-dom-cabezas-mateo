@@ -31,7 +31,7 @@ const cargarPersonajes = (arregloPj) => {
         rowCards.innerHTML +=`
             <div class="col-2 mt-4 mb-4" dataset="${personaje.id}">
                 <div class="card" style="width: 10rem;">
-                    <img src="${personaje.imagen}" class="card-img-top" alt="...">
+                    <img src="${personaje.imagen}" class="card-img-top" style="height: 250px; object-fit: cover" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">${personaje.nombre}</h5>
                         <a href="#" class="btn btn-primary" id="btnDel">Eliminar</a>
