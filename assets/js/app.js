@@ -61,3 +61,26 @@ searchName.addEventListener("click", (e) => {
     }
     // console.log(e)
 })
+
+// aca abajo ocurre similarmente lo mismo que con la busqueda, se escucha globalmente el evento click desde el contenedor padre mas cercano (form) y luego se pregunta "¿el id del objetivo del event object (en este caso el botón de subir), es estrictamente igual a 'btnSubirPj'?", si es así se crean variables temporales: personajeSubido que es igual al value del input que ingresó el usuario como nombre del personaje a subir, e imgSubida, que es igual al valor del url que ingresó el usuario. Se utiliza el metodo preventDefault sobre el event object al principio para evitar que el formulario recargue la página automaticamente al enviar los datos
+formSubmit.addEventListener("click", (e) => {
+    if (e.target.id === 'btnSubirPj') {
+        e.preventDefault()
+        const personajeSubido = nameSubmit.value
+        const imgSubida = urlSubmit.value
+        // console.log("Se detectó el click en botón subir!")
+        // console.log(e.target)
+        // console.log(personajeSubido)
+        // console.log(imgSubida)
+        const personajeNuevo = {
+            id: personajes.length+1,
+            nombre: personajeSubido,
+            imagen: imgSubida
+        }
+        // ahí arriba se crea un nuevo objeto con sus propiedades respectivas que son los inputs del usuario. en id se usa .length+1 para que se lea la longitud del arreglo original y se le incremente 1, ya que este nuevo objeto una vez metido en el arreglo de 5 personajes tendría de id: 6
+        personajes.push(personajeNuevo)
+        // una vez creado el objeto, simplemente se agrega al final de arreglo con el metodo .push, en los parametros del metodo ponemos como argumento el nombre de la variable que guardará nuestro nuevo objeto
+        cargarPersonajes(personajes)
+        //por ultimo, llamamos a la función cargarPersonajes que construye las cards y le damos como argumento en los parametros el arreglo de personajes con el nuevo personaje ya añadido
+    }
+})
