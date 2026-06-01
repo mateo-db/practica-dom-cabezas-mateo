@@ -22,6 +22,11 @@ const personajes = [
 "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/md/5-abraxas.jpg" },
 ];
 
+// creamos copia mutable del arreglo original para trabajar con esa copia y no tocar el arreglo original con los 5 personajes
+let arrayPersonajes = [...personajes]
+// creamos una variable para los ids de los nuevos personajes que se vayan sumando al arreglo, como el nuestro original tiene 5, el proximo personaje que se añada será el sexto y si o si llevará el id nro 6. Esto tambien nos ayuda a evitar depender del metodo length y ahorrarnos errores con IDs repetidos a la hora de eliminar personajes que se añadan al arreglo
+let idAutoIncremental = 6
+
 // console.log(personajes)
 //acá se declara la variable funcion cargarPersonajes, donde adentro se ejecutará un forEach que irá recorriendo cada personaje del arreglo, e irá construyendo las cards segun su info respectiva
 const cargarPersonajes = (arregloPj) => {
@@ -29,12 +34,12 @@ const cargarPersonajes = (arregloPj) => {
 
     arregloPj.forEach((personaje) => {
         rowCards.innerHTML +=`
-            <div class="col-2 mt-4 mb-4" dataset="${personaje.id}">
+            <div class="col-2 mt-4 mb-4" data-id="${personaje.id}">
                 <div class="card" style="width: 10rem;">
                     <img src="${personaje.imagen}" class="card-img-top" style="height: 250px; object-fit: cover" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">${personaje.nombre}</h5>
-                        <a href="#" class="btn btn-primary" id="btnDel">Eliminar</a>
+                        <a href="#" class="btn btn-danger">Eliminar</a>
                     </div>
                 </div>
             </div>
@@ -44,7 +49,7 @@ const cargarPersonajes = (arregloPj) => {
 }
 
 // aca se llama a la funcion cargarPersonajes
-cargarPersonajes(personajes)
+cargarPersonajes(arrayPersonajes)
 
 searchName.addEventListener("click", (e) => {
     if (e.target.id === 'btnBuscar') {
@@ -52,7 +57,7 @@ searchName.addEventListener("click", (e) => {
         // console.log ("Se detectó el click y se capturó el texto que ingresó el usuario!")
         // console.log(nombreBuscado)
         // acá abajo es donde se hace la lógica detrás del buscador de personajes, donde declaramos como constante la variable donde se guardará el resultado del metodo filter
-        const personajeFiltrado = personajes.filter(personaje => personaje.nombre.toLowerCase().replaceAll("-", " ").includes(nombreBuscado.toLowerCase().replaceAll("-", " ")))
+        const personajeFiltrado = arrayPersonajes.filter(arrayPersonaje => arrayPersonaje.nombre.toLowerCase().replaceAll("-", " ").includes(nombreBuscado.toLowerCase().replaceAll("-", " ")))
         // el metodo filter recorre el arreglo, objeto por objeto, siguiendo los parametros que basicamente le indican: "por cada objeto singular del arreglo evalua si el nombre del personaje (convertido a minusculas) contiene, en cualquier parte, el string del input ingresado por el usuario (tambien está convertido a minusculas)... si es así guardá ese objeto entero en el arreglo temporal personajeEncontrado; los objetos que, al comparar su nombre con el string que ingresó el usuario no cumplan con la evaluación, no los guardes, se descartan"
         //el metodo replaceAll tiene parametros adentro los cuales indican: si el nombre del personaje que está siendo evaluado contiene guiones, esos guiones se reemplazan temporalmente por espacios, y como con nombreBuscado (que contiene el string que ingresó el usuario) aplicamos el mismo metodo de replaceAll con los mismos parametros, al momento de evaluar la comparación los strings coinciden con exactitud)
         cargarPersonajes(personajeFiltrado)
@@ -73,14 +78,28 @@ formSubmit.addEventListener("click", (e) => {
         // console.log(personajeSubido)
         // console.log(imgSubida)
         const personajeNuevo = {
-            id: personajes.length+1,
+            id: idAutoIncremental,
             nombre: personajeSubido,
             imagen: imgSubida
         }
-        // ahí arriba se crea un nuevo objeto con sus propiedades respectivas que son los inputs del usuario. en id se usa .length+1 para que se lea la longitud del arreglo original y se le incremente 1, ya que este nuevo objeto una vez metido en el arreglo de 5 personajes tendría de id: 6
-        personajes.push(personajeNuevo)
+        idAutoIncremental++
+        // ahí arriba se crea un nuevo objeto con sus propiedades respectivas que son los inputs del usuario. en id se usa la variable idAutoIncremental que vale 6 para nuestro primer nuevo personaje que será el sexto en el arreglo de 5, luego de crear ese primer nuevo objeto incrementamos en 1 (++) el valor de idAutoIncremental, asi de este modo el proximo personaje despues del sexto que se añada al arreglo (el septimo) será de id 7 logicamente, y así sucesivamente
+        arrayPersonajes.push(personajeNuevo)
         // una vez creado el objeto, simplemente se agrega al final de arreglo con el metodo .push, en los parametros del metodo ponemos como argumento el nombre de la variable que guardará nuestro nuevo objeto
-        cargarPersonajes(personajes)
+        cargarPersonajes(arrayPersonajes)
         //por ultimo, llamamos a la función cargarPersonajes que construye las cards y le damos como argumento en los parametros el arreglo de personajes con el nuevo personaje ya añadido
+    }
+})
+
+// lo mismo, se escucha evento globalmente desde contenedor padre relativamente mayor que engloba todo, luego se evalua si el target del event object contiene la info del botón en particular que nos interesa (en este caso el botón eliminar, que contiene la clase btn-danger), se usa metodo preventDefault sobre evento para evitar comportamientos raros ya que el botón en este caso en realidad es un enlace "a", se determina el contenedor padre más cercano al target del event object (en este caso sería el .col-2), el resultado de eso se guarda en una variable llamado colPadreMasCercano, el dataset.id de ese .col-2 evaluado se guarda en variable personajeEliminado, se utiliza metodo filter con un parametro que indica "el id del personaje del arreglo, es diferente al id del personaje eliminado? si es entonces se guarda el objeto, en caso contrario se descarta", y según ese resultado se va a modificar el mismo arreglo de personajes que venimos usando (la copia) para que se rendericen todas las cards de los superheroes menos el que coincido con el id de la card donde se hizo click en el botón eliminar, finalmente se llama a la funcion que construye las cards para darle como argumento dentro de sus parametros el arreglo modificado de la forma anteriormente explicada
+rowCards.addEventListener("click", (e) => {
+    if (e.target.classList.contains("btn-danger")) {
+        e.preventDefault()
+        // console.log("Se detectó el botón eliminar con exito!")
+        const colPadreMasCercano = e.target.closest(".col-2")
+        const personajeEliminado = colPadreMasCercano.dataset.id
+        // console.log(personajeEliminado)
+        arrayPersonajes = arrayPersonajes.filter(arrayPersonaje => arrayPersonaje.id != personajeEliminado)
+        cargarPersonajes(arrayPersonajes)
     }
 })
